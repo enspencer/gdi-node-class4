@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Class 3 ~ Server-side Development with Node.js ~ Girl Develop It</title>
+
+		<meta name="description" content="This is an introduction to node.js curriculum, developed by Emma for the Boston chapter.
+
+        The course is meant to be taught in 4 two-hour sections. Each of the slides and practice files are customizable according to the needs of a given class or audience.">
+		<meta name="author" content="Girl Develop It">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/gdidefault.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- For syntax highlighting -->
+		<!-- light editor<link rel="stylesheet" href="lib/css/light.css">-->
+		<!-- dark editor--><link rel="stylesheet" href="reveal/lib/css/dark.css">
+
+		<!-- If use the PDF print sheet so students can print slides-->
+
+		<link rel="stylesheet" href="reveal/css/print/pdf.css" type="text/css" media="print">
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+        <!-- Opening slide -->
+            <section>
+                <img src="images/gdi_logo_badge.png" alt="GDI logo">
+                <h3>Server-side Development with Node.js</h3>
+                <h4>Class 4</h4>
+            </section>
+
+            <section>
+                <h3>Grunt</h3>
+                <p>Grunt is a task runner that can perform tasks like minification, compilation, unit testing, linting. Globally install the Grunt command line interface (CLI) and create a Gruntfile.js:</p>
+                <pre><code>
+npm install -g grunt-cli
+touch Gruntfile.js
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Dependencies</h3>
+                <p>In your package.json add these as dev dependencies:</p>
+                <pre><code>
+"devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "*",
+    "grunt-htmlhint": "*",
+    "grunt-contrib-uglify": "~0.5.0",
+    "matchdep": "*"
+}
+                </code></pre>
+                <p>Then run `npm install`</p>
+            </section>
+
+            <section>
+                <h3>Create a Grunt task</h3>
+                <pre><code>
+module.exports = function(grunt){
+
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json')
+    });
+
+    grunt.registerTask('default', []);
+
+};
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Grunt</h3>
+                <p>Above grunt.initConfig() add this:</p>
+                <pre><code>
+require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
+                </code></pre>
+                <p>The matchdep module will install any devDependencies from the package.json that begin with "grunt-"</p>
+            </section>
+
+            <section>
+                <h3>Watch tasks</h3>
+                <p>Inside grunt.initConfig add these options:</p>
+                <pre><code>htmlhint: {
+    build: {
+        options: {
+            'tag-pair': true,
+            'tagname-lowercase': true,
+            'attr-lowercase': true,
+            'attr-value-double-quotes': true,
+            'spec-char-escape': true
+        },
+        src: ['index.html']
+    }
+},
+watch: {
+    html: {
+        files: ['index.html'],
+        tasks: ['htmlhint']
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Watch tasks</h3>
+                <p>Now open another terminal and run:</p>
+                <pre><code>
+grunt watch
+                </code></pre>
+                <p>When you edit your HTML file this watch task will run and validate the HTML.</p>
+            </section>
+
+            <section>
+                <h3>Uglify your code</h3>
+                <p>Have you ever seen minified Javascript? Uglify is a module that compresses your code and is used a lot for production applications. Add this option to grunt.initConfig:</p>
+                <pre><code>
+uglify: {
+    build: {
+        files: {
+            'build/js/base.min.js': ['base.js']
+        }
+    }
+},
+watch: {
+    js: {
+        files: ['base.js'],
+        tasks: ['uglify']
+    },
+    html: {...}
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Check out what other options Grunt can do for you!</h3>
+                <p>Look up how to do these things with Grunt:</p>
+                <ul>
+                    <li>Automatically build source files when they’re modified</li>
+                    <li>Run a development server</li>
+                    <li>Minify CSS</li>
+                </ul>
+            </section>
+
+			</div><!-- Close .slides -->
+  		<footer>
+        <div class="copyright">
+          Server-Side Development in Node.js ~ Girl Develop It ~
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a>
+        </div><!-- Close .copyright -->
+      </footer>
+    </div><!-- Close .reveal -->
+
+
+		<script src="reveal/lib/js/head.min.js"></script>
+		<script src="reveal/js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+                touch: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'reveal/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
