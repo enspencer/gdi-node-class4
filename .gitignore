@@ -1,5 +1,4 @@
 node_modules/
-Gruntfile.js
 npm-debug.log
 build/
 myGruntfile.js
