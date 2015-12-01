@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Spotify</title>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	</head>
+	<body>
+		<form title="form">
+			<input type="text" id="query">
+			<select id="typeSelect">
+				<option value="artist">Artist</option>
+				<option value="album">Album</option>
+				<option value="track">Track</option>
+				<option value="playlist">Playlist</option>
+			</select>
+			<button id="searchAction" type="button">Search</button>
+		</form>
+
+	</body>
+
+</html>
+
+<script type="text/javascript">
+	$('#searchAction').click(function(e) {
+		var query = $("#query").val();
+		var type = $("#typeSelect").val();
+		$.ajax({
+			url:'/spotify',
+			type:'POST',
+			data: {
+				query: query,
+				type: type
+			},
+			dataType:'json',
+			success:function(res) {
+				console.log(res);
+			}
+		});
+	});
+</script>

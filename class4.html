@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Class 3 ~ Server-side Development with Node.js ~ Girl Develop It</title>
+
+		<meta name="description" content="This is an introduction to node.js curriculum, developed by Emma for the Boston chapter.
+
+        The course is meant to be taught in 4 two-hour sections. Each of the slides and practice files are customizable according to the needs of a given class or audience.">
+		<meta name="author" content="Girl Develop It">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/gdidefault.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- For syntax highlighting -->
+		<!-- light editor<link rel="stylesheet" href="lib/css/light.css">-->
+		<!-- dark editor--><link rel="stylesheet" href="reveal/lib/css/dark.css">
+
+		<!-- If use the PDF print sheet so students can print slides-->
+
+		<link rel="stylesheet" href="reveal/css/print/pdf.css" type="text/css" media="print">
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+        <!-- Opening slide -->
+            <section>
+                <img src="images/gdi_logo_badge.png" alt="GDI logo">
+                <h3>Server-side Development with Node.js</h3>
+                <h4>Class 4</h4>
+            </section>
+
+            <section>
+                <h3>Welcome to class 4!</h3>
+                <p>Clone today's app and install dependencies:</p>
+                <pre><code>
+git clone git@github.com:enspencer/gdi-node-class4.git
+cd gdi-node-class4
+npm install
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Node Tools</h3>
+                <p>There are a lot of developer tools available on NPM that make coding faster and more efficient. Some examples of problems solved by tools:</p>
+                <ul>
+                    <li>Validating HTML & JS</li>
+                    <li>Running tests</li>
+                    <li>Minifying your code</li>
+                    <!-- <li>Automatically watching files</li> -->
+                </ul>
+            </section>
+
+            <section>
+                <h3>Grunt</h3>
+                <p>Grunt is a task runner that can perform tasks like minification, compilation, unit testing, and linting. Globally install the Grunt command line interface (CLI):</p>
+                <pre><code>
+npm install -g grunt-cli
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Grunt tasks</h3>
+                <p>We can tell Grunt to perform functions based on commands. Look at the first task in Gruntfile.js: </p>
+                <pre><code>
+grunt.registerTask('default', 'this task says hello', function() {
+  console.log('Hello!');
+});
+                </code></pre>
+                <p>We can execute this command by running:</p>
+                <pre><code>
+grunt default
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Tasks with parameters</h3>
+                <p>We can write Grunt tasks that expect parameters in order to be executed. This task will throw an error unless we pass it a name:</p>
+                <pre><code>
+grunt.registerTask('default', 'this task says hello', function() {
+  console.log('Hello!');
+});
+                </code></pre>
+                <p>Try running this command without a param, then with one:</p>
+                <pre><code>
+grunt greeting
+grunt greeting:Bob
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Chaining tasks</h3>
+                <p>We can also call multiple tasks with one command by using an array:</p>
+                <pre><code>
+grunt.registerTask('mytask', ['default', 'greeting:Bob']);
+                </code></pre>
+                <p>Try chaining tasks and running it in your console.</p>
+            </section>
+
+            <section>
+                <h3>Dependencies</h3>
+
+                <p>Like Node, Grunt has a lot of packages you can install as needed.In your package.json these dev dependencies have been added:</p>
+                <pre><code>
+"devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "*",
+    "grunt-htmlhint": "*",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "*",
+    "matchdep": "*"
+}
+                </code></pre>
+                <p>If you haven't already, run `npm install`</p>
+            </section>
+
+            <section>
+                <h3>Grunt</h3>
+                <p>Instead of requiring each dependency on its own, we can require all of them with one line. Add this line after line 1:</p>
+                <pre><code>
+require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
+                </code></pre>
+                <p>The matchdep module will make available any devDependencies from the package.json that begin with "grunt-".</p>
+            </section>
+
+            <section>
+                <h3>Validate HTML</h3>
+                <p>The grunt-htmlhint plugin will check that our HTMl is accurate. Uncomment these lines in the GruntFile:</p>
+                <pre><code>grunt.initConfig({
+    htmlhint: {
+      build: {
+        options: {
+          'tag-pair': true,
+          'tagname-lowercase': true,
+          'attr-lowercase': true,
+          'attr-value-double-quotes': true
+        },
+        src: ['index.html']
+      }
+    }
+  });
+                </code></pre>
+                <p>This will look at the index.html file and validate it against each of the options specified in grunt.initConfig().</p>
+            </section>
+
+            <section>
+                <h3>Watch tasks</h3>
+                <p>We can run `grunt htmlhint` whenever we want, but what if we want it to run every time we save our HTML file? In grunt.initConfig() after htmlhint add these lines:</p>
+                <pre><code>watch: {
+  html: {
+    files: ['index.html'],
+    tasks: ['htmlhint']
+  }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Watch tasks</h3>
+                <p>Go to your console and run:</p>
+                <pre><code>
+grunt watch
+                </code></pre>
+                <p>When you edit your HTML file this watch task will run and validate the HTML. Go to index.html, save the file and look at the console.</p>
+            </section>
+
+            <section>
+                <h3>Uglify your code</h3>
+                <p>Have you ever seen minified Javascript? Uglify is a plugin that compresses your code and is used a lot for production applications to make your code smaller and faster. Add this option to grunt.initConfig:</p>
+                <pre><code>
+uglify: {
+    build: {
+        files: {
+            'build/js/base.min.js': ['base.js']
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Uglify your code</h3>
+                <p>What's happening here? We're telling Uglify to look at the file named base.js, uglify it, save it in a new subdirectory build/js/ and name the file base.min.js:</p>
+                <pre><code>
+uglify: {
+    build: {
+        files: {
+            'build/js/base.min.js': ['base.js']
+        }
+    }
+}
+                </code></pre>
+                <p>Run `grunt uglify` in your console and check that the build/ directory was created.</p>
+            </section>
+
+            <section>
+                <h3>Uglify on watch</h3>
+                <p>Like we did with HTMLHint, we can create a watch task to Uglify our JS every time we save the file. Add this to your watch configuration:</p>
+                <pre><code>
+watch: {
+    js: {
+        files: ['base.js'],
+        tasks: ['uglify']
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Check out what other options Grunt can do for you!</h3>
+                <p>Look up how to do these things with Grunt:</p>
+                <ul>
+                    <li>Build CSS from SASS files</li>
+                    <li>Validate JS files</li>
+                    <li>Minify CSS</li>
+                    <li>Run tests</li>
+                    <li>Generate code coverage reports</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>And now for something complete different...</h3>
+            </section>
+
+            <section>
+                <h3>External APIs</h3>
+                <p>We're going to spend some time fetching data from the Spotify API to practice querying from and passing data to the front end. server.js has two /spotify endpoints for GET and POST. We also have a spotify.mustache template in the views/ directory. Let's take a minute to read through those.</p>
+            </section>
+
+            <section>
+                <h3>Set up</h3>
+                <p>Run your server and go to localhost:9000/spotify. Open up your browser's developer tools and look at the JS console. Enter text in the search box and click the submit button. Look at your browser console and your command line.</p>
+            </section>
+
+            <section>
+                <h3>Connecting to an API</h3>
+                <ul>
+                    <li>We'll first connect to Spotify by making requests directly to a URL</li>
+                    <li>Then we'll use a node module to use functions that will connect us</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>request.js</h3>
+                <p>Before we get started, let's look at a node module that will be helpful. <a href="https://github.com/request/request">request</a> is a module that makes HTTP calls very simple. It's similar to AJAX in that it sends data to a route and receives a response. The difference is that request does this from the back end.</p>
+            </section>
+
+            <section>
+                <h3>request.js</h3>
+                <p>In its simplest form request takes a URL and a callback function that says what to do with the response:</p>
+                <pre><code>
+request('https://www.google.com', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log(body)
+    }
+});
+                </code></pre>
+                <p>In server.js fill in TO DO #1 and #2 in order to request data from Spotify. The result should be Spotify data logged in your browser's console.</p>
+            </section>
+
+            <section>
+                <h3>Spotify node module</h3>
+                <p>For this exercise you'll need a Spotify username and password. Use your Spotify account or create a new one. If you'd rather not, move a few slides forward to the slide titled "More".</p>
+            </section>
+
+            <section>
+                <h3>spotify-web</h3>
+                <p>We'll be using a module named <a href="https://github.com/TooTallNate/node-spotify-web">spotify-web</a>. Let's walk through the spotify.js file located in this directory starting with the top:</p>
+                <pre><code>
+var Spotify = require('spotify-web');
+var xml2js = require('xml2js');
+var superagent = require('superagent');
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Command line arguments</h3>
+                <p>These three variables take data that we pass in from the command line. process.argv[0] is node and process.argv[1] is the filename. Subsequent arguments are available for us to use starting with argv[2]:</p>
+                <pre><code>
+var username = process.argv[2];
+var password = process.argv[3];
+var query = process.argv[4];
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Making a request</h3>
+                <pre><code>Spotify.login(username, password, function(err, spotify) {
+  if (err)
+    throw err;
+
+  spotify.search(query, function(err, xml) {
+    if (err)
+      throw err;
+    spotify.disconnect();
+
+    var parser = new xml2js.Parser();
+    parser.on('end', function(data) {
+      console.log(JSON.stringify(data, null, 2));
+    });
+    parser.parseString(xml);
+  });
+});
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Search spotify</h3>
+                <p>Run this in your console:</p>
+                <pre><code>
+node spotify.js username password query
+                </code></pre>
+            </section>
+
+            <section>
+                <h3>Spotify module with your server</h3>
+                <p>Try using the code in spotify.js in your POST to /spotify in server.js</p>
+            </section>
+
+            <section>
+                <h3>More</h3>
+                <p>Try getting data from more endpoints. Using request.js you can use any endpoints listed <a href="https://developer.spotify.com/web-api/endpoint-reference/">here</a> that don't have 'OAuth' next to them. </p>
+            </section>
+
+            <section>
+                <h3>Reminder: surveys!</h3>
+                <p>Please fill out the class survey before you leave. The link is on meetup.com and <a href="http://csat.prestomobilesurveys.com/site/TakeEval/survey_id/1465/target/node-nov-15">here</a>.</p>
+                <h4>Thanks!</h4>
+            </section>
+
+			</div><!-- Close .slides -->
+  		<footer>
+        <div class="copyright">
+          Server-Side Development in Node.js ~ Girl Develop It ~
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a>
+        </div><!-- Close .copyright -->
+      </footer>
+    </div><!-- Close .reveal -->
+
+
+		<script src="reveal/lib/js/head.min.js"></script>
+		<script src="reveal/js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+                touch: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'reveal/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
